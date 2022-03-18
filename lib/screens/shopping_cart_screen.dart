@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_shop_app/models/cart_item.dart';
+import 'package:flutter_shop_app/providers/order_provider.dart';
+import 'package:flutter_shop_app/widgets/shopping_cart_item.dart';
 import 'package:provider/provider.dart';
 import '../providers/cart_provider.dart';
 
@@ -34,15 +37,32 @@ class ShoppingCartScreen extends StatelessWidget {
                     backgroundColor: Theme.of(context).primaryColor,
                   ),
                   TextButton(
-                      onPressed: () {},
-                      child: Text(
-                        "Order now",
-                        style: TextStyle(color: Theme.of(context).primaryColor),
-                      )),
+                    onPressed: () {
+                      Provider.of<OrderProvider>(context, listen: false)
+                          .addOrder(cart.items.values.toList(), cart.totalAmount);
+                      cart.clearCart();
+                    },
+                    child: Text(
+                      "Order now",
+                      style: TextStyle(color: Theme.of(context).primaryColor),
+                    ),
+                  ),
                 ],
               ),
             ),
-          )
+          ),
+          Expanded(
+              child: ListView.builder(
+            itemBuilder: (context, cartItem) {
+              return ShoppingCartItem(
+                  id: cart.items.values.toList()[cartItem].id,
+                  title: cart.items.values.toList()[cartItem].title,
+                  productId: cart.items.keys.toList()[cartItem],
+                  price: cart.items.values.toList()[cartItem].price,
+                  quantity: cart.items.values.toList()[cartItem].quantity);
+            },
+            itemCount: cart.items.length,
+          ))
         ],
       ),
     );
