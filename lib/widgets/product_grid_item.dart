@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_shop_app/models/product.dart';
-import 'package:flutter_shop_app/screens/product_detail_screen.dart';
 import 'package:provider/provider.dart';
 
-class ProductGridItem extends StatelessWidget {
-  // final Product product;
+import '../models/product.dart';
+import '../providers/cart_provider.dart';
+import '../screens/product_detail_screen.dart';
 
+class ProductGridItem extends StatelessWidget {
   const ProductGridItem({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final product = Provider.of<Product>(context);
+    final product = Provider.of<Product>(context, listen: false);
+    final cart = Provider.of<CartProvider>(context, listen: false);
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
       child: GridTile(
@@ -29,15 +30,19 @@ class ProductGridItem extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
           backgroundColor: Colors.black54,
-          leading: IconButton(
-            onPressed: () => product.toggleFavoriteStatus(),
-            icon: Icon(product.isFavorite ? Icons.favorite : Icons.favorite_border),
-            color: Theme.of(context).accentColor,
+          leading: Consumer<Product>(
+            builder: (context, product, child) => IconButton(
+              onPressed: () => product.toggleFavoriteStatus(),
+              icon: Icon(product.isFavorite ? Icons.favorite : Icons.favorite_border),
+              color: Colors.orange,
+            ),
           ),
           trailing: IconButton(
-              onPressed: () {},
+              onPressed: () {
+                cart.addItem(product.id, product.price, product.title);
+              },
               icon: const Icon(
-                Icons.shopping_cart,
+                Icons.add_shopping_cart,
               ),
               color: Theme.of(context).accentColor),
         ),

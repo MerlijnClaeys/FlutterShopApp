@@ -36,6 +36,8 @@ class ProductsProvider with ChangeNotifier {
     ),
   ];
 
+  var favoritesOnly = false;
+
   List<Product> get items {
     return [..._items]; //copy of _items
   }
@@ -47,5 +49,9 @@ class ProductsProvider with ChangeNotifier {
 
   Product findById(String id) {
     return _items.firstWhere((element) => element.id == id);
+  }
+
+  List<Product> get favoriteItems {
+    return _items.where((product) => product.isFavorite).toList();
   }
 }
