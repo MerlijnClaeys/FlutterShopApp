@@ -31,10 +31,8 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
             ],
             onSelected: (FilterOptions selectedValue) {
               setState(() {
-                print(selectedValue);
                 if (selectedValue == FilterOptions.Favorites) {
                   _showOnlyFavorites = true;
-                  print(_showOnlyFavorites);
                 } else {
                   _showOnlyFavorites = false;
                 }
