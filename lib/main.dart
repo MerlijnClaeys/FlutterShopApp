@@ -10,6 +10,7 @@ import '../providers/products_provider.dart';
 import '../screens/product_detail_screen.dart';
 import '../screens/products_overview_screen.dart';
 import '../screens/shopping_cart_screen.dart';
+//https://shop-app-2fd5f-default-rtdb.europe-west1.firebasedatabase.app/
 
 void main() {
   runApp(const MyApp());
