@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_shop_app/providers/auth_provider.dart';
+import 'package:flutter_shop_app/screens/auth_screen.dart';
 import 'package:flutter_shop_app/screens/edit_product_screen.dart';
 import 'package:flutter_shop_app/screens/orders_screen.dart';
+import 'package:flutter_shop_app/screens/splash_screen.dart';
 import 'package:flutter_shop_app/screens/user_products_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -23,24 +26,45 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => ProductsProvider()),
-        ChangeNotifierProvider(create: (context) => CartProvider()),
-        ChangeNotifierProvider(create: (context) => OrderProvider())
-      ],
-      child: MaterialApp(
-        title: "Salespoint",
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-          accentColor: Colors.orange,
-          fontFamily: "Lato",
+        ChangeNotifierProvider(create: (context) => AuthProvider()),
+        ChangeNotifierProxyProvider<AuthProvider, ProductsProvider>(
+          update: (ctx, auth, previousProducts) => ProductsProvider(auth.token ?? "",
+              auth.userId ?? "", previousProducts == null ? [] : previousProducts.items),
+          create: (_) => ProductsProvider("", "", []),
         ),
-        home: const ProductOverviewScreen(),
-        routes: {
-          ProductDetailScreen.routeName: (context) => const ProductDetailScreen(),
-          ShoppingCartScreen.routeName: (context) => const ShoppingCartScreen(),
-          OrdersScreen.routeName: (context) => const OrdersScreen(),
-          UserProductsScreen.routeName: (context) => const UserProductsScreen(),
-          EditProductScreen.routeName: (context) => const EditProductScreen(),
+        ChangeNotifierProxyProvider<AuthProvider, OrderProvider>(
+          update: (ctx, auth, previousOrders) => OrderProvider(auth.token ?? "", auth.userId ?? "",
+              previousOrders == null ? [] : previousOrders.orders),
+          create: (_) => OrderProvider("", "", []),
+        ),
+        ChangeNotifierProvider(create: (context) => CartProvider()),
+      ],
+      child: Consumer<AuthProvider>(
+        builder: (ctx, auth, _) {
+          return MaterialApp(
+            title: "Salespoint",
+            theme: ThemeData(
+              primarySwatch: Colors.blue,
+              accentColor: Colors.orange,
+              fontFamily: "Lato",
+            ),
+            home: auth.isAuth
+                ? const ProductOverviewScreen()
+                : FutureBuilder(
+                    future: auth.tryAutoLogin(),
+                    builder: (ctx, authResultSnapshot) =>
+                        authResultSnapshot.connectionState == ConnectionState.waiting
+                            ? const SplashScreen()
+                            : const AuthScreen(),
+                  ),
+            routes: {
+              ProductDetailScreen.routeName: (context) => const ProductDetailScreen(),
+              ShoppingCartScreen.routeName: (context) => const ShoppingCartScreen(),
+              OrdersScreen.routeName: (context) => const OrdersScreen(),
+              UserProductsScreen.routeName: (context) => const UserProductsScreen(),
+              EditProductScreen.routeName: (context) => const EditProductScreen(),
+            },
+          );
         },
       ),
     );
