@@ -21,9 +21,13 @@ class ProductGridItem extends StatelessWidget {
           onTap: () {
             Navigator.of(context).pushNamed(ProductDetailScreen.routeName, arguments: product.id);
           },
-          child: Image.network(
-            product.imageUrl,
-            fit: BoxFit.cover,
+          child: Hero(
+            tag: product.id,
+            child: FadeInImage(
+              placeholder: const AssetImage('assets/images/product-placeholder.png'),
+              image: NetworkImage(product.imageUrl),
+              fit: BoxFit.cover,
+            ),
           ),
         ),
         footer: GridTileBar(
@@ -34,7 +38,8 @@ class ProductGridItem extends StatelessWidget {
           backgroundColor: Colors.black54,
           leading: Consumer<Product>(
             builder: (context, product, child) => IconButton(
-              onPressed: () => product.toggleFavoriteStatus(authData.token ?? "", authData.userId ?? ""),
+              onPressed: () =>
+                  product.toggleFavoriteStatus(authData.token ?? "", authData.userId ?? ""),
               icon: Icon(product.isFavorite ? Icons.favorite : Icons.favorite_border),
               color: Colors.orange,
             ),

@@ -20,32 +20,35 @@ class _OrderItemState extends State<OrderItem> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.all(10),
-      child: Column(
-        children: [
-          ListTile(
-            title: Text("\$${widget.order.amount}"),
-            subtitle: Text(
-              DateFormat('dd-MM-yyyy hh:mm').format(widget.order.dateTime),
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      height: _expanded ? min(widget.order.cartItems.length * 20 + 150, 230) : 95,
+      child: Card(
+        margin: const EdgeInsets.all(10),
+        child: Column(
+          children: [
+            ListTile(
+              title: Text("\$${widget.order.amount}"),
+              subtitle: Text(
+                DateFormat('dd-MM-yyyy hh:mm').format(widget.order.dateTime),
+              ),
+              trailing: IconButton(
+                icon: Icon(_expanded ? Icons.expand_less : Icons.expand_more),
+                onPressed: () {
+                  setState(() {
+                    _expanded = !_expanded;
+                  });
+                },
+              ),
             ),
-            trailing: IconButton(
-              icon: Icon(_expanded ? Icons.expand_less : Icons.expand_more),
-              onPressed: () {
-                setState(() {
-                  _expanded = !_expanded;
-                });
-              },
-            ),
-          ),
-          if (_expanded)
-            Container(
-              height: min(widget.order.cartItems.length * 20 + 100, 180),
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              height: _expanded ? min(widget.order.cartItems.length * 20 + 150, 230) : 0,
               child: ListView.builder(
                   itemBuilder: (context, index) {
                     CartItem cartItem = widget.order.cartItems[index];
                     return Padding(
-                      padding: EdgeInsets.all(10),
+                      padding: const EdgeInsets.all(10),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -69,7 +72,8 @@ class _OrderItemState extends State<OrderItem> {
                   },
                   itemCount: widget.order.cartItems.length),
             ),
-        ],
+          ],
+        ),
       ),
     );
   }

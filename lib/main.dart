@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_shop_app/helpers/route.dart';
 import 'package:flutter_shop_app/providers/auth_provider.dart';
 import 'package:flutter_shop_app/screens/auth_screen.dart';
 import 'package:flutter_shop_app/screens/edit_product_screen.dart';
@@ -44,10 +45,13 @@ class MyApp extends StatelessWidget {
           return MaterialApp(
             title: "Salespoint",
             theme: ThemeData(
-              primarySwatch: Colors.blue,
-              accentColor: Colors.orange,
-              fontFamily: "Lato",
-            ),
+                primarySwatch: Colors.blue,
+                accentColor: Colors.orange,
+                fontFamily: "Lato",
+                pageTransitionsTheme: PageTransitionsTheme(builders: {
+                  TargetPlatform.android: CustomPageTransitionBuilder(),
+                  TargetPlatform.iOS: CustomPageTransitionBuilder(),
+                })),
             home: auth.isAuth
                 ? const ProductOverviewScreen()
                 : FutureBuilder(
